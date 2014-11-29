@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install coffee-script
+before_script:
+- ./node_modules/.bin/cake archive
+script:
+- ./node_modules/.bin/cake test
+deploy:
+  provider: releases
+  api_key:
+    secure: frXLQckGWXFtzhoWsgKYr65YMXMcMCnuSBd67pbbfNzSOhDXXs/Md3LI4DpxndJ6N8hWSXmBKMShXpdXHsu+4cK/8R1thEry77nmIff/2Qh1V1ONhX9C2V89my4tQ8pUX6h58x6xUOweqfnXuEl4Es6YZGR8AiR4pSDLrtMH1hU=
+  file: build/SwiftNSURLSessionCodeGenerator.zip
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: LuckyMarmot/Paw-SwiftNSURLSessionCodeGenerator
