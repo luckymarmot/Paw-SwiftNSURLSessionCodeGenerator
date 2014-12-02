@@ -1,16 +1,22 @@
 [![Build Status](https://travis-ci.org/LuckyMarmot/Paw-SwiftNSURLSessionCodeGenerator.svg?branch=master)](https://travis-ci.org/LuckyMarmot/Paw-SwiftNSURLSessionCodeGenerator)
 
-#Swift + NSURLSession Code Generator (Paw Extension)
+# Swift + NSURLSession Code Generator (Paw Extension)
 
 This a Paw Extension that generates code for Swift using the `NSURLSession` library.
 
-##License
+## Installation
+
+* `npm install`
+* `cake build`
+* `cake install`
+
+## License
 
 This Paw Extension is released under the [MIT License](LICENSE). Feel free to fork, and modify!
 
 Copyright © 2014 Paw Inc.
 
-##Contributors
+## Contributors
 
 See [Contributors](https://github.com/LuckyMarmot/Paw-SwiftNSURLSessionCodeGenerator/graphs/contributors).
 
