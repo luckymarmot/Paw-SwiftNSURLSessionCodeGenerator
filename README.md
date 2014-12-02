@@ -20,7 +20,7 @@ Copyright © 2014 Paw Inc.
 
 See [Contributors](https://github.com/LuckyMarmot/Paw-SwiftNSURLSessionCodeGenerator/graphs/contributors).
 
-##Credits
+## Credits
 
 * [Mustache.js](https://github.com/janl/mustache.js/), also released under the MIT License
 * [URI.js](http://medialize.github.io/URI.js/), also released under the MIT License
