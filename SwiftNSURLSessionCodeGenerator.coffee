@@ -111,8 +111,9 @@ SwiftNSURLSessionCodeGenerator = ->
 
 
 SwiftNSURLSessionCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.SwiftNSURLSessionCodeGenerator";
+    "com.luckymarmot.PawExtensions.SwiftNSURLSessionCodeGenerator"
 SwiftNSURLSessionCodeGenerator.title =
-    "Swift (NSURLSession)";
+    "Swift (NSURLSession)"
+SwiftNSURLSessionCodeGenerator.fileExtension = "swift"
 
 registerCodeGenerator SwiftNSURLSessionCodeGenerator
