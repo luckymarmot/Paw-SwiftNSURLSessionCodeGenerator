@@ -115,5 +115,6 @@ SwiftNSURLSessionCodeGenerator.identifier =
 SwiftNSURLSessionCodeGenerator.title =
     "Swift (NSURLSession)"
 SwiftNSURLSessionCodeGenerator.fileExtension = "swift"
+SwiftNSURLSessionCodeGenerator.languageHighlighter = "swift"
 
 registerCodeGenerator SwiftNSURLSessionCodeGenerator
