@@ -8,7 +8,7 @@ class MyRequestController {
          HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
          */
         let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
- 
+
         /* Create session, and optionally set a NSURLSessionDelegate. */
         let session = NSURLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
 
@@ -73,7 +73,7 @@ class MyRequestController {
         let task = session.dataTaskWithRequest(request, completionHandler: { (data : NSData!, response : NSURLResponse!, error : NSError!) -> Void in
             if (error == nil) {
                 // Success
-                let statusCode = (response as NSHTTPURLResponse).statusCode
+                let statusCode = (response as! NSHTTPURLResponse).statusCode
                 println("URL Session Task Succeeded: HTTP \(statusCode)")
             }
             else {
@@ -98,11 +98,11 @@ class MyRequestController {
             var part = NSString(format: "%@=%@",
                 name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!,
                 value.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
-            parts.append(part)
+            parts.append(part as String)
         }
         return "&".join(parts)
     }
-        
+
     /**
      Creates a new URL by adding the given query parameters.
      @param URL The input URL.
@@ -111,7 +111,7 @@ class MyRequestController {
     */
     func NSURLByAppendingQueryParameters(URL : NSURL!, queryParameters : Dictionary<String, String>) -> NSURL {
         let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString!, self.stringFromQueryParameters(queryParameters))
-        return NSURL(string: URLString)!
+        return NSURL(string: URLString as String)!
     }
     {{/has_utils_query_string}}
 }
