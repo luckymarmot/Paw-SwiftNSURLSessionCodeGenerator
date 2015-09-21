@@ -52,7 +52,7 @@ class MyRequestController {
         // JSON Body
 
         {{{body.json_body_object}}}
-        request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(bodyObject, options:nil, error:nil)
 
         {{/body.has_json_body}}
         {{#body.has_raw_body}}
