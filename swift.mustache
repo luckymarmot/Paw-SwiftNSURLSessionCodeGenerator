@@ -16,7 +16,7 @@ class MyRequestController {
            {{{request.name}}} ({{{request.method}}} {{{url.base}}})
          */
 
-        var URL = NSURL(string: "{{{url.base}}}")
+        let URL = NSURL(string: "{{{url.base}}}")!
         {{#url.has_params}}
         let URLParams = [
         {{#url.params}}
@@ -25,7 +25,7 @@ class MyRequestController {
         ]
         URL = self.NSURLByAppendingQueryParameters(URL, queryParameters: URLParams)
         {{/url.has_params}}
-        let request = NSMutableURLRequest(URL: URL!)
+        let request = NSMutableURLRequest(URL: URL)
         request.HTTPMethod = "{{{request.method}}}"
 
         {{#headers.has_headers}}
@@ -70,17 +70,17 @@ class MyRequestController {
 
         {{/body.has_long_body}}
         /* Start a new Task */
-        let task = session.dataTaskWithRequest(request, completionHandler: { (data : NSData!, response : NSURLResponse!, error : NSError!) -> Void in
-            if (error == nil) {
-                // Success
-                let statusCode = (response as! NSHTTPURLResponse).statusCode
-                println("URL Session Task Succeeded: HTTP \(statusCode)")
-            }
-            else {
+        let task = session.dataTaskWithRequest(request, completionHandler: { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+            guard let data = data else {
                 // Failure
-                println("URL Session Task Failed: %@", error.localizedDescription);
+                print("URL Session Task Failed: %@", error!.localizedDescription)
+                return
             }
+            // Success
+            let statusCode = (response as! NSHTTPURLResponse).statusCode
+            print("URL Session Task Succeeded: HTTP \(statusCode)")
         })
+        
         task.resume()
     }
 
@@ -89,28 +89,28 @@ class MyRequestController {
      This creates a new query parameters string from the given NSDictionary. For
      example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
      string will be @"day=Tuesday&month=January".
-     @param queryParameters The input dictionary.
-     @return The created parameters string.
+     - parameter queryParameters: The input dictionary.
+     - returns: The created parameters string.
     */
     func stringFromQueryParameters(queryParameters : Dictionary<String, String>) -> String {
         var parts: [String] = []
         for (name, value) in queryParameters {
-            var part = NSString(format: "%@=%@",
-                name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!,
-                value.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+            let part = NSString(format: "%@=%@",
+                name.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())!,
+				value.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())!
             parts.append(part as String)
         }
-        return "&".join(parts)
+        return parts.joinWithSeparator("&")
     }
 
     /**
      Creates a new URL by adding the given query parameters.
-     @param URL The input URL.
-     @param queryParameters The query parameter dictionary to add.
-     @return A new NSURL.
+     - parameter URL: The input URL.
+     - parameter queryParameters: The query parameter dictionary to add.
+     - returns: A new NSURL.
     */
     func NSURLByAppendingQueryParameters(URL : NSURL!, queryParameters : Dictionary<String, String>) -> NSURL {
-        let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString!, self.stringFromQueryParameters(queryParameters))
+        let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString, self.stringFromQueryParameters(queryParameters))
         return NSURL(string: URLString as String)!
     }
     {{/has_utils_query_string}}
