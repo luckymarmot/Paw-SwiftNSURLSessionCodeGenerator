@@ -16,16 +16,16 @@ class MyRequestController {
            {{{request.name}}} ({{{request.method}}} {{{url.base}}})
          */
 
-        var URL = NSURL(string: "{{{url.base}}}")
+        guard var URL = NSURL(string: "{{{url.base}}}") else {return}
         {{#url.has_params}}
         let URLParams = [
         {{#url.params}}
             "{{{name}}}": "{{{value}}}",
         {{/url.params}}
         ]
-        URL = self.NSURLByAppendingQueryParameters(URL, queryParameters: URLParams)
+        URL = URL.URLByAppendingQueryParameters(URLParams)
         {{/url.has_params}}
-        let request = NSMutableURLRequest(URL: URL!)
+        let request = NSMutableURLRequest(URL: URL)
         request.HTTPMethod = "{{{request.method}}}"
 
         {{#headers.has_headers}}
@@ -44,7 +44,7 @@ class MyRequestController {
             "{{{name}}}": "{{{value}}}",
         {{/body.url_encoded_body}}
         ]
-        let bodyString = self.stringFromQueryParameters(bodyParameters)
+        let bodyString = bodyParameters.queryParameters
         request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
 
         {{/body.has_url_encoded_body}}
@@ -52,7 +52,7 @@ class MyRequestController {
         // JSON Body
 
         {{{body.json_body_object}}}
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(bodyObject, options:nil, error:nil)
+        request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(bodyObject, options: [])
 
         {{/body.has_json_body}}
         {{#body.has_raw_body}}
@@ -70,48 +70,56 @@ class MyRequestController {
 
         {{/body.has_long_body}}
         /* Start a new Task */
-        let task = session.dataTaskWithRequest(request, completionHandler: { (data : NSData!, response : NSURLResponse!, error : NSError!) -> Void in
+        let task = session.dataTaskWithRequest(request, completionHandler: { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
             if (error == nil) {
                 // Success
                 let statusCode = (response as! NSHTTPURLResponse).statusCode
-                println("URL Session Task Succeeded: HTTP \(statusCode)")
+                print("URL Session Task Succeeded: HTTP \(statusCode)")
             }
             else {
                 // Failure
-                println("URL Session Task Failed: %@", error.localizedDescription);
+                print("URL Session Task Failed: %@", error!.localizedDescription);
             }
         })
         task.resume()
     }
+}
 
-    {{#has_utils_query_string}}
+{{#has_utils_query_string}}
+
+protocol URLQueryParameterStringConvertible {
+    var queryParameters: String {get}
+}
+
+extension Dictionary : URLQueryParameterStringConvertible {
     /**
-     This creates a new query parameters string from the given NSDictionary. For
+     This computed property returns a query parameters string from the given NSDictionary. For
      example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
      string will be @"day=Tuesday&month=January".
-     @param queryParameters The input dictionary.
-     @return The created parameters string.
+     @return The computed parameters string.
     */
-    func stringFromQueryParameters(queryParameters : Dictionary<String, String>) -> String {
+    var queryParameters: String {
         var parts: [String] = []
-        for (name, value) in queryParameters {
-            var part = NSString(format: "%@=%@",
-                name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!,
-                value.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+        for (key, value) in self {
+            let part = NSString(format: "%@=%@",
+                String(key).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!,
+                String(value).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
             parts.append(part as String)
         }
-        return "&".join(parts)
+        return parts.joinWithSeparator("&")
     }
+    
+}
 
+extension NSURL {
     /**
      Creates a new URL by adding the given query parameters.
-     @param URL The input URL.
-     @param queryParameters The query parameter dictionary to add.
+     @param parametersDictionary The query parameter dictionary to add.
      @return A new NSURL.
     */
-    func NSURLByAppendingQueryParameters(URL : NSURL!, queryParameters : Dictionary<String, String>) -> NSURL {
-        let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString!, self.stringFromQueryParameters(queryParameters))
+    func URLByAppendingQueryParameters(parametersDictionary : Dictionary<String, String>) -> NSURL {
+        let URLString : NSString = NSString(format: "%@?%@", self.absoluteString, parametersDictionary.queryParameters)
         return NSURL(string: URLString as String)!
     }
-    {{/has_utils_query_string}}
 }
+{{/has_utils_query_string}}
