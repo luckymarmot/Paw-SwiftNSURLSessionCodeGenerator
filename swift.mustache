@@ -45,7 +45,7 @@ class MyRequestController {
         {{/body.url_encoded_body}}
         ]
         let bodyString = bodyParameters.queryParameters
-        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
 
         {{/body.has_url_encoded_body}}
         {{#body.has_json_body}}
@@ -59,14 +59,14 @@ class MyRequestController {
         // Body
 
         let bodyString = "{{{body.raw_body}}}"
-        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
 
         {{/body.has_raw_body}}
         {{#body.has_long_body}}
         // Body
 
         let bodyString = "" // set your body string
-        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
 
         {{/body.has_long_body}}
         /* Start a new Task */
@@ -103,8 +103,8 @@ extension Dictionary : URLQueryParameterStringConvertible {
         var parts: [String] = []
         for (key, value) in self {
             let part = String(format: "%@=%@",
-                String(describing: key).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!,
-                String(describing: value).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!)
+                String(describing: key).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!,
+                String(describing: value).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
             parts.append(part as String)
         }
         return parts.joined(separator: "&")
