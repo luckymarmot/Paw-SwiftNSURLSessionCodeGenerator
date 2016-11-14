@@ -2,10 +2,6 @@ import Cocoa
 
 class MyRequestController {
     
-    func printSomething() {
-        print("printSomething")
-    }
-    
     func sendGETRequest() {
         /* Configure session, choose between:
          * defaultSessionConfiguration
@@ -312,13 +308,10 @@ extension URL {
 // MARK: - Send Requests!
 
 let ctrl = MyRequestController()
-
-ctrl.printSomething()
 ctrl.sendGETRequest()
 ctrl.sendTextRequest()
 ctrl.sendJSONRequest()
 ctrl.sendFormURLEncoded()
 ctrl.sendMultiPart()
-
-print("Done!")
+print("All test requests sent!")
 
