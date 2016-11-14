@@ -9,7 +9,7 @@
 )(this)
 
 addslashes = (str) ->
-    ("#{str}").replace(/[\\"]/g, '\\$&')
+    ("#{str}").replace(/[\\"]/g, '\\$&').replace(/(?:\r)/g, '\\r').replace(/(?:\n)/g, '\\n')
 
 SwiftNSURLSessionCodeGenerator = ->
 
@@ -95,7 +95,7 @@ SwiftNSURLSessionCodeGenerator = ->
                     "\n#{indent_str}]"
 
         if indent <= 1
-            s = "let bodyObject = #{s}"
+            s = "let bodyObject: [String : Any] = #{s}"
 
         return s
 
