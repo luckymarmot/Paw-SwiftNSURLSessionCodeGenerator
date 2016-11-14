@@ -7,26 +7,26 @@ class MyRequestController {
          And set session-wide properties, such as: HTTPAdditionalHeaders,
          HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
          */
-        let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let sessionConfig = URLSessionConfiguration.default
 
-        /* Create session, and optionally set a NSURLSessionDelegate. */
-        let session = NSURLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        /* Create session, and optionally set a URLSessionDelegate. */
+        let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
 
         /* Create the Request:
            {{{request.name}}} ({{{request.method}}} {{{url.base}}})
          */
 
-        guard var URL = NSURL(string: "{{{url.base}}}") else {return}
+        guard var URL = URL(string: "{{{url.base}}}") else {return}
         {{#url.has_params}}
         let URLParams = [
         {{#url.params}}
             "{{{name}}}": "{{{value}}}",
         {{/url.params}}
         ]
-        URL = URL.URLByAppendingQueryParameters(URLParams)
+        URL = URL.appendingQueryParameters(URLParams)
         {{/url.has_params}}
-        let request = NSMutableURLRequest(URL: URL)
-        request.HTTPMethod = "{{{request.method}}}"
+        var request = URLRequest(url: URL)
+        request.httpMethod = "{{{request.method}}}"
 
         {{#headers.has_headers}}
         // Headers
@@ -45,35 +45,35 @@ class MyRequestController {
         {{/body.url_encoded_body}}
         ]
         let bodyString = bodyParameters.queryParameters
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
 
         {{/body.has_url_encoded_body}}
         {{#body.has_json_body}}
         // JSON Body
 
         {{{body.json_body_object}}}
-        request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(bodyObject, options: [])
+        request.httpBody = try! JSONSerialization.data(withJSONObject: bodyObject, options: [])
 
         {{/body.has_json_body}}
         {{#body.has_raw_body}}
         // Body
 
         let bodyString = "{{{body.raw_body}}}"
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
 
         {{/body.has_raw_body}}
         {{#body.has_long_body}}
         // Body
 
         let bodyString = "" // set your body string
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        request.httpBody = bodyString.data(using: String.Encoding.utf8, allowLossyConversion: true)
 
         {{/body.has_long_body}}
         /* Start a new Task */
-        let task = session.dataTaskWithRequest(request, completionHandler: { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+        let task = session.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
             if (error == nil) {
                 // Success
-                let statusCode = (response as! NSHTTPURLResponse).statusCode
+                let statusCode = (response as! HTTPURLResponse).statusCode
                 print("URL Session Task Succeeded: HTTP \(statusCode)")
             }
             else {
@@ -102,25 +102,25 @@ extension Dictionary : URLQueryParameterStringConvertible {
     var queryParameters: String {
         var parts: [String] = []
         for (key, value) in self {
-            let part = NSString(format: "%@=%@",
-                String(key).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!,
-                String(value).stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+            let part = String(format: "%@=%@",
+                String(describing: key).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!,
+                String(describing: value).addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!)
             parts.append(part as String)
         }
-        return parts.joinWithSeparator("&")
+        return parts.joined(separator: "&")
     }
     
 }
 
-extension NSURL {
+extension URL {
     /**
      Creates a new URL by adding the given query parameters.
      @param parametersDictionary The query parameter dictionary to add.
-     @return A new NSURL.
+     @return A new URL.
     */
-    func URLByAppendingQueryParameters(parametersDictionary : Dictionary<String, String>) -> NSURL {
-        let URLString : NSString = NSString(format: "%@?%@", self.absoluteString, parametersDictionary.queryParameters)
-        return NSURL(string: URLString as String)!
+    func appendingQueryParameters(_ parametersDictionary : Dictionary<String, String>) -> URL {
+        let URLString : String = String(format: "%@?%@", self.absoluteString, parametersDictionary.queryParameters)
+        return URL(string: URLString)!
     }
 }
 {{/has_utils_query_string}}
