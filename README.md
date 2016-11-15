@@ -2,7 +2,7 @@
 
 # Swift + NSURLSession Code Generator (Paw Extension)
 
-A [Paw Extension](http://luckymarmot.com/paw/extensions/) that generates Swift code for the [NSURLSession](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLSession_class/) library.
+A [Paw Extension](https://paw.cloud/extensions/SwiftNSURLSessionCodeGenerator) that generates Swift 3 code for the [NSURLSession](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLSession_class/) library.
 
 ## Installation
 
@@ -30,7 +30,7 @@ cake watch
 
 This Paw Extension is released under the [MIT License](LICENSE). Feel free to fork, and modify!
 
-Copyright © 2014 Paw Inc.
+Copyright © 2014-2016 Paw Inc.
 
 ## Contributors
 
