@@ -207,7 +207,7 @@ class MyRequestController {
             }
             else {
                 // Failure
-                print("URL Session Task Failed: %@", error!.localizedDescription);
+                print("URL Session Task Failed: %@", error!.localizedDescription)
             }
         })
         task.resume()
